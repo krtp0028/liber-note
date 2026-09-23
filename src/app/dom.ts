@@ -25,6 +25,7 @@ export interface Layout {
   errorBanner: HTMLElement;
   conflictBanner: HTMLElement;
   tabBar: HTMLElement;
+  sidebar: HTMLElement;
   treeSearch: HTMLInputElement;
   treeContainer: HTMLElement;
   tagPanel: HTMLElement;
@@ -185,6 +186,7 @@ export function buildLayout(root: HTMLElement): Layout {
     errorBanner,
     conflictBanner,
     tabBar,
+    sidebar,
     treeSearch,
     treeContainer,
     tagPanel,

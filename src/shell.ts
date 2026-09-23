@@ -6,7 +6,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check as checkUpdate } from "@tauri-apps/plugin-updater";
 import { AttachmentsPanel } from "./attachments";
-import { buildLayout } from "./app/dom";
+import { buildLayout, el } from "./app/dom";
 import { mountMarkdownTools } from "./app/formatbar";
 import { mountTabs } from "./app/tabs";
 import { commands } from "./commands";
@@ -64,6 +64,7 @@ export function mountShell(root: HTMLElement): void {
     errorBanner,
     conflictBanner,
     tabBar,
+    sidebar,
     treeSearch,
     treeContainer,
     tagPanel,
@@ -1297,6 +1298,15 @@ export function mountShell(root: HTMLElement): void {
     run: () => recentPanel.open(),
   });
 
+  const rootHint = el("div", "tree-empty");
+  const hintText = document.createElement("span");
+  hintText.textContent = "No root folder yet — pick one to hold your notes and nodes.";
+  const chooseRoot = el("button", "button");
+  chooseRoot.textContent = "Choose root folder…";
+  chooseRoot.addEventListener("click", () => runCommand("vault.open"));
+  rootHint.append(hintText, chooseRoot);
+  sidebar.append(rootHint);
+
   void installMenu(runCommand, showNotice);
 
   openButton.addEventListener("click", () => runCommand("vault.open"));
@@ -1520,6 +1530,7 @@ export function mountShell(root: HTMLElement): void {
   let lastDirty: boolean | undefined;
   let lastTitle = "";
   store.subscribe((state) => {
+    rootHint.hidden = state.root !== null;
     statusVault.textContent = state.root ?? "no vault open";
     statusFile.textContent = state.activePath ?? "";
     statusType.textContent = state.activePath

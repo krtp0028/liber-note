@@ -34,6 +34,7 @@ import { SearchUi } from "./searchui";
 import { computeRollups } from "./rollup";
 import { VaultStore } from "./store";
 import { TasksPanel } from "./tasks";
+import { WELCOME_MD, WELCOME_PATH } from "./welcome";
 import { upsertFrontmatter } from "./frontmatter";
 import { ThemeController } from "./theme";
 import { TreeView } from "./tree";
@@ -104,6 +105,7 @@ export function mountShell(root: HTMLElement): void {
   });
   createPreview(previewPane, store);
   const secondaryViewer = createViewer(secondaryPane);
+  store.openWelcome(WELCOME_PATH, WELCOME_MD);
 
   let noticeTimer: number | undefined;
   const showNotice = (text: string): void => {

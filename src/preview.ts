@@ -6,7 +6,6 @@ import type { FileMeta } from "./api";
 import "./languages";
 import { baseName, parentDir, resolveRelative } from "./paths";
 import type { VaultStore } from "./store";
-import { WELCOME_MD } from "./welcome";
 
 const PREVIEW_DELAY_MS = 80;
 
@@ -61,10 +60,6 @@ function render(
   entries: FileMeta[],
 ): void {
   if (activePath === null) {
-    if (store.getState().root === null) {
-      container.innerHTML = renderMarkdown(WELCOME_MD);
-      return;
-    }
     container.textContent = "Open a note to see the preview";
     return;
   }

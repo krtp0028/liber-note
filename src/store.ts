@@ -121,6 +121,17 @@ export class VaultStore {
     this.setState({ contents, dirty: true });
   }
 
+  openWelcome(path: string, contents: string): void {
+    this.tabContents.set(path, contents);
+    this.setState({
+      activePath: path,
+      tabs: [path],
+      contents,
+      dirty: false,
+      loading: false,
+    });
+  }
+
   async saveActive(): Promise<void> {
     const { root, activePath, contents } = this.state;
     if (!root || !activePath) {

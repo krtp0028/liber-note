@@ -183,6 +183,8 @@ npx tauri build --bundles nsis   # or appimage/deb/rpm/app/dmg
 
 CI builds and tests on Windows, Linux, and macOS (`.github/workflows/ci.yml`).
 
+Features are developed on `develop`; pull requests target `develop`. Releases are cut from `main` by pushing a `v*` tag, which builds installers for Windows, Linux, and macOS (`.github/workflows/release.yml`).
+
 ## Known limitations
 
 - No auto-updater yet (installers are manual).

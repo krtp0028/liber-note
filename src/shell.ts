@@ -1300,9 +1300,9 @@ export function mountShell(root: HTMLElement): void {
 
   const rootHint = el("div", "tree-empty");
   const hintText = document.createElement("span");
-  hintText.textContent = "No root folder yet — pick one to hold your notes and nodes.";
+  hintText.textContent = "Choose a root folder.";
   const chooseRoot = el("button", "button");
-  chooseRoot.textContent = "Choose root folder…";
+  chooseRoot.textContent = "Browse…";
   chooseRoot.addEventListener("click", () => runCommand("vault.open"));
   rootHint.append(hintText, chooseRoot);
   sidebar.append(rootHint);

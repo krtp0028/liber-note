@@ -1,6 +1,6 @@
 # Example Vault
 
-A small vault that demonstrates Graft's features. Open this folder in the app.
+A small vault that demonstrates Liber's features. Open this folder in the app.
 
 - [[Welcome]] — what to look at first
 - Projects/Alpha — a branch note with inherited tags and rollups

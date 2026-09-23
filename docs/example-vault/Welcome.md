@@ -5,7 +5,7 @@ order: 10
 
 # Welcome
 
-This vault is a playground for Graft's tree features. Try these:
+This vault is a playground for Liber's tree features. Try these:
 
 1. Look at the tree: `Projects/Alpha` has a task badge that sums its whole subtree.
 2. `Reference/Postgres.md` lives in `Reference/` on disk but also appears under `Topics/` — that is the `also_under` mirror.

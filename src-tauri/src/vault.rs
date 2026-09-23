@@ -7,7 +7,7 @@ use std::time::UNIX_EPOCH;
 
 const EXCLUDED_DIRS: &[&str] = &[
     ".git",
-    ".graft",
+    ".liber",
     ".hg",
     ".svn",
     ".obsidian",
@@ -251,7 +251,7 @@ pub fn trash_move(root: &str, rel_path: &str) -> Result<String, String> {
     if !source.exists() {
         return Err(format!("path does not exist: {rel_path}"));
     }
-    let trash_dir = Path::new(root).join(".graft").join("trash");
+    let trash_dir = Path::new(root).join(".liber").join("trash");
     fs::create_dir_all(&trash_dir).map_err(|error| error.to_string())?;
 
     let stamp = std::time::SystemTime::now()
@@ -267,7 +267,7 @@ pub fn trash_restore(root: &str, trash_id: &str) -> Result<String, String> {
     if trash_id.contains('/') || trash_id.contains('\\') || trash_id.contains("..") {
         return Err(format!("invalid trash id: {trash_id}"));
     }
-    let trash_path = Path::new(root).join(".graft").join("trash").join(trash_id);
+    let trash_path = Path::new(root).join(".liber").join("trash").join(trash_id);
     if !trash_path.exists() {
         return Err(format!("trash entry not found: {trash_id}"));
     }
@@ -287,7 +287,7 @@ pub fn trash_restore(root: &str, trash_id: &str) -> Result<String, String> {
 }
 
 pub fn trash_list(root: &str) -> Result<Vec<TrashEntry>, String> {
-    let trash_dir = Path::new(root).join(".graft").join("trash");
+    let trash_dir = Path::new(root).join(".liber").join("trash");
     if !trash_dir.is_dir() {
         return Ok(Vec::new());
     }
@@ -320,7 +320,7 @@ pub fn trash_delete(root: &str, trash_id: &str) -> Result<(), String> {
     if trash_id.contains('/') || trash_id.contains('\\') || trash_id.contains("..") {
         return Err(format!("invalid trash id: {trash_id}"));
     }
-    let path = Path::new(root).join(".graft").join("trash").join(trash_id);
+    let path = Path::new(root).join(".liber").join("trash").join(trash_id);
     if !path.exists() {
         return Err(format!("trash entry not found: {trash_id}"));
     }
@@ -634,7 +634,7 @@ mod tests {
 
     fn temp_vault() -> PathBuf {
         let unique = COUNTER.fetch_add(1, Ordering::SeqCst);
-        let path = std::env::temp_dir().join(format!("graft-scan-{}-{unique}", std::process::id()));
+        let path = std::env::temp_dir().join(format!("liber-scan-{}-{unique}", std::process::id()));
         fs::create_dir_all(&path).unwrap();
         path
     }
@@ -671,7 +671,7 @@ mod tests {
     fn excludes_app_and_vcs_directories() {
         let vault = temp_vault();
         fs::create_dir_all(vault.join(".git")).unwrap();
-        fs::create_dir_all(vault.join(".graft/trash")).unwrap();
+        fs::create_dir_all(vault.join(".liber/trash")).unwrap();
         fs::create_dir_all(vault.join("node_modules/pkg")).unwrap();
         fs::write(vault.join(".git/config"), b"x").unwrap();
         fs::write(vault.join("keep.md"), b"x").unwrap();
@@ -866,7 +866,7 @@ mod tests {
         let trash_id = super::trash_move(root, "docs/a.md").unwrap();
 
         assert!(!vault.join("docs/a.md").exists());
-        assert!(vault.join(".graft/trash").join(&trash_id).exists());
+        assert!(vault.join(".liber/trash").join(&trash_id).exists());
         assert!(scan_vault(root)
             .unwrap()
             .iter()

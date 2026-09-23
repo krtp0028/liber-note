@@ -1,5 +1,5 @@
--- Example init.lua for Graft. Copy to your config directory
--- (%APPDATA%\graft\init.lua on Windows) and reload the app.
+-- Example init.lua for Liber. Copy to your config directory
+-- (%APPDATA%\liber\init.lua on Windows) and reload the app.
 
 -- 1. Custom command: its return value is inserted at the cursor.
 mdtree.command{

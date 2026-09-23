@@ -54,9 +54,9 @@ export const DEFAULT_CONFIG: AppConfig = {
   files: { exclude: [] },
 };
 
-export const STARTER_CONFIG = `# Graft configuration
+export const STARTER_CONFIG = `# Liber configuration
 # Values here override the built-in defaults.
-# A \`.graft/config.toml\` inside a vault overrides this file per key.
+# A \`.liber/config.toml\` inside a vault overrides this file per key.
 
 [editor]
 fontSize = 14
@@ -340,7 +340,7 @@ export class ConfigManager {
   }
 
   private applyCustomCss(css: string | null): void {
-    const id = "graft-custom-css";
+    const id = "liber-custom-css";
     let style = document.getElementById(id);
     if (css === null) {
       style?.remove();

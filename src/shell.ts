@@ -45,7 +45,7 @@ export function mountShell(root: HTMLElement): void {
   const app = el("div", "app");
   const topbar = el("header", "topbar");
   const brand = el("span", "brand");
-  brand.textContent = "Graft";
+  brand.textContent = "Liber";
 
   const iconButton = (name: Parameters<typeof icon>[0], title: string): HTMLButtonElement => {
     const button = document.createElement("button");
@@ -964,12 +964,12 @@ export function mountShell(root: HTMLElement): void {
   const applyZoom = (value: number, announce = true): void => {
     const clamped = Math.min(1.6, Math.max(0.7, Math.round(value * 100) / 100));
     document.body.style.zoom = String(clamped);
-    window.localStorage.setItem("graft.zoom", String(clamped));
+    window.localStorage.setItem("liber.zoom", String(clamped));
     if (announce) {
       showNotice(`zoom ${Math.round(clamped * 100)}%`);
     }
   };
-  const currentZoom = (): number => Number(window.localStorage.getItem("graft.zoom") ?? "1");
+  const currentZoom = (): number => Number(window.localStorage.getItem("liber.zoom") ?? "1");
   applyZoom(currentZoom(), false);
 
   commands.register({
@@ -1195,13 +1195,13 @@ export function mountShell(root: HTMLElement): void {
         }
       });
       tab.addEventListener("dragstart", (event) => {
-        event.dataTransfer?.setData("application/x-graft-tab", String(index));
+        event.dataTransfer?.setData("application/x-liber-tab", String(index));
       });
       tab.addEventListener("dragover", (event) => {
         event.preventDefault();
       });
       tab.addEventListener("drop", (event) => {
-        const raw = event.dataTransfer?.getData("application/x-graft-tab");
+        const raw = event.dataTransfer?.getData("application/x-liber-tab");
         if (raw === undefined || raw === "") {
           return;
         }
@@ -1692,7 +1692,7 @@ export function mountShell(root: HTMLElement): void {
     await lua.hook("startup", store.getState().root ?? "");
   })();
 
-  const SESSION_KEY = "graft.session";
+  const SESSION_KEY = "liber.session";
   const saveSession = (): void => {
     const { root, tabs, activePath } = store.getState();
     window.localStorage.setItem(SESSION_KEY, JSON.stringify({ root, tabs, activePath }));
@@ -1818,7 +1818,7 @@ export function mountShell(root: HTMLElement): void {
     scheduleSessionSave();
 
     const title = `${state.activePath ? `${baseName(state.activePath)} — ` : ""}${
-      state.root ? baseName(state.root) : "Graft"
+      state.root ? baseName(state.root) : "Liber"
     }`;
     if (title !== lastTitle) {
       lastTitle = title;

@@ -1,4 +1,4 @@
-const RECENT_KEY = "graft.recent-vaults";
+const RECENT_KEY = "liber.recent-vaults";
 const MAX_RECENT = 8;
 
 export function rememberVault(root: string): void {

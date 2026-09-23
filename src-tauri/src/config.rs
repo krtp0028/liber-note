@@ -19,7 +19,7 @@ pub fn user_config_dir() -> Result<PathBuf, String> {
     }
     let base =
         dirs::config_dir().ok_or_else(|| "cannot locate the user config directory".to_string())?;
-    let dir = base.join("graft");
+    let dir = base.join("liber");
     fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
     Ok(dir)
 }
@@ -27,13 +27,13 @@ pub fn user_config_dir() -> Result<PathBuf, String> {
 fn portable_data_dir() -> Option<PathBuf> {
     let exe = std::env::current_exe().ok()?;
     let dir = exe.parent()?;
-    dir.join("graft-portable.txt")
+    dir.join("liber-portable.txt")
         .exists()
-        .then(|| dir.join("graft-data"))
+        .then(|| dir.join("liber-data"))
 }
 
 fn vault_config_dir(root: &str) -> Result<PathBuf, String> {
-    let dir = Path::new(root).join(".graft");
+    let dir = Path::new(root).join(".liber");
     fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
     Ok(dir)
 }
@@ -148,17 +148,17 @@ mod tests {
 
     #[test]
     fn is_within_accepts_base_and_children() {
-        let base = Path::new("C:/data/graft");
+        let base = Path::new("C:/data/liber");
         assert!(is_within(base, base));
-        assert!(is_within(Path::new("C:/data/graft/themes"), base));
-        assert!(is_within(Path::new("C:/data/graft/themes/a.toml"), base));
+        assert!(is_within(Path::new("C:/data/liber/themes"), base));
+        assert!(is_within(Path::new("C:/data/liber/themes/a.toml"), base));
     }
 
     #[test]
     fn is_within_rejects_siblings_and_parents() {
-        let base = Path::new("C:/data/graft");
+        let base = Path::new("C:/data/liber");
         assert!(!is_within(Path::new("C:/data/other"), base));
         assert!(!is_within(Path::new("C:/data"), base));
-        assert!(!is_within(Path::new("C:/data/graft-other/x"), base));
+        assert!(!is_within(Path::new("C:/data/liber-other/x"), base));
     }
 }

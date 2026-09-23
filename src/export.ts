@@ -44,7 +44,7 @@ export async function exportNoteAsHtml(relPath: string, contents: string): Promi
 
 export async function exportNoteAsPdf(relPath: string, contents: string): Promise<string> {
   const directory = await tempDir();
-  const target = `${directory}graft-${baseName(relPath).replace(/\.md$/i, "")}.html`;
+  const target = `${directory}liber-${baseName(relPath).replace(/\.md$/i, "")}.html`;
   await api.writeTextAbsolute(
     target,
     buildHtmlDocument(baseName(relPath), renderMarkdown(contents)),

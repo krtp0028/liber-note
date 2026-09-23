@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Graft",
+  "productName": "Liber",
   "version": "0.1.0",
-  "identifier": "com.krtp.graft",
+  "identifier": "com.krtp.liber",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Graft",
+        "title": "Liber",
         "width": 1100,
         "height": 720,
         "minWidth": 720,

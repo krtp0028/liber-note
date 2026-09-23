@@ -122,9 +122,9 @@ pub fn build(dir: &str) -> Result<LuaHost, String> {
             .map_err(|error| error.to_string())?;
     }
 
-    lua.set_named_registry_value("graft_commands", commands_table)
+    lua.set_named_registry_value("liber_commands", commands_table)
         .map_err(lua_error)?;
-    lua.set_named_registry_value("graft_hooks", hooks_table)
+    lua.set_named_registry_value("liber_hooks", hooks_table)
         .map_err(lua_error)?;
 
     let commands = commands_sink.lock().unwrap().clone();
@@ -150,7 +150,7 @@ impl LuaHost {
     pub fn run_command(&self, name: &str) -> Result<Option<String>, String> {
         let table: Table = self
             .lua
-            .named_registry_value("graft_commands")
+            .named_registry_value("liber_commands")
             .map_err(lua_error)?;
         let function: Function = table
             .get(name)
@@ -162,7 +162,7 @@ impl LuaHost {
     pub fn run_hook(&self, event: &str, payload: &str) -> Result<Option<String>, String> {
         let table: Table = self
             .lua
-            .named_registry_value("graft_hooks")
+            .named_registry_value("liber_hooks")
             .map_err(lua_error)?;
         let function: Function = match table.get(event) {
             Ok(function) => function,
@@ -188,7 +188,7 @@ mod tests {
 
     fn temp_dir() -> PathBuf {
         let unique = COUNTER.fetch_add(1, Ordering::SeqCst);
-        let path = std::env::temp_dir().join(format!("graft-lua-{}-{unique}", std::process::id()));
+        let path = std::env::temp_dir().join(format!("liber-lua-{}-{unique}", std::process::id()));
         fs::create_dir_all(&path).unwrap();
         path
     }

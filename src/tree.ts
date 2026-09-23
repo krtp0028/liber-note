@@ -71,7 +71,7 @@ export class TreeView {
       event.preventDefault();
     });
     this.container.addEventListener("drop", (event) => {
-      const raw = event.dataTransfer?.getData("application/x-graft-paths");
+      const raw = event.dataTransfer?.getData("application/x-liber-paths");
       if (raw && this.options.onMove && event.target === this.container) {
         event.preventDefault();
         try {
@@ -283,7 +283,7 @@ export class TreeView {
             this.selection.has(node.relPath) && this.getSelection().length > 0
               ? this.getSelection()
               : [node.openPath !== "" ? node.openPath : node.relPath];
-          event.dataTransfer?.setData("application/x-graft-paths", JSON.stringify(this.dragPaths));
+          event.dataTransfer?.setData("application/x-liber-paths", JSON.stringify(this.dragPaths));
           if (event.dataTransfer) {
             event.dataTransfer.effectAllowed = "move";
           }
@@ -327,7 +327,7 @@ export class TreeView {
               ? "after"
               : "into";
           clearDropClasses();
-          const raw = event.dataTransfer?.getData("application/x-graft-paths");
+          const raw = event.dataTransfer?.getData("application/x-liber-paths");
           if (raw && this.options.onMove) {
             event.preventDefault();
             event.stopPropagation();

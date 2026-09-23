@@ -6,18 +6,19 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check as checkUpdate } from "@tauri-apps/plugin-updater";
 import { AttachmentsPanel } from "./attachments";
+import { buildLayout } from "./app/dom";
+import { mountMarkdownTools } from "./app/formatbar";
+import { mountTabs } from "./app/tabs";
 import { commands } from "./commands";
 import { config } from "./config";
 import { createEditor, createViewer } from "./editor";
 import { exportNoteAsHtml, exportNoteAsPdf } from "./export";
 import { openHealthPanel } from "./health";
-import { icon } from "./icons";
 import { DEFAULT_KEYMAP, isMacPlatform, matchesEvent } from "./keymap";
 import type { KeyBinding } from "./keymap";
 import { isPreviewPosition, nextPreviewPosition } from "./layout";
 import type { PreviewPosition } from "./layout";
 import { LuaController } from "./lua";
-import { insertCodeBlock, insertLink, prefixLines, toggleHeading, wrapSelection } from "./markdown";
 import { installMenu } from "./menu";
 import { CommandPalette, fuzzyMatch } from "./palette";
 import { baseName, parentDir } from "./paths";
@@ -42,125 +43,43 @@ export function mountShell(root: HTMLElement): void {
   const isMac = isMacPlatform();
   const themeController = new ThemeController();
 
-  const app = el("div", "app");
-  const topbar = el("header", "topbar");
-  const brand = el("span", "brand");
-  brand.textContent = "Liber";
-
-  const iconButton = (name: Parameters<typeof icon>[0], title: string): HTMLButtonElement => {
-    const button = document.createElement("button");
-    button.className = "toolbar-button";
-    button.title = title;
-    button.append(icon(name, 15));
-    return button;
-  };
-
-  const openButton = iconButton("folder", "Open folder (Ctrl+O)");
-  const addNodeButton = iconButton("add-node", "Add node after selected (Ctrl+N)");
-  const addChildButton = iconButton("add-child", "Add child node (Ctrl+Shift+N)");
-  const newFolderButton = iconButton("new-folder", "New folder (Ctrl+Alt+N)");
-  const saveButton = iconButton("save", "Save (Ctrl+S)");
-  const undoButton = iconButton("undo", "Undo last file operation");
-  const searchButton = iconButton("search", "Search vault (Ctrl+Shift+F)");
-  const quickOpenButton = iconButton("go-to", "Quick open (Ctrl+P)");
-  const tasksButton = iconButton("check", "Open tasks");
-  const previewButton = iconButton("preview", "Cycle preview position (Ctrl+Shift+V)");
-  const configButton = iconButton("settings", "Config health");
-
-  const divider = (): HTMLElement => el("span", "sep");
-  const notice = el("span", "notice");
-  notice.hidden = true;
-  const dirty = el("span", "dirty");
-  dirty.textContent = "●";
-  dirty.title = "Unsaved changes";
-  dirty.hidden = true;
-
-  topbar.append(
-    brand,
-    divider(),
+  const {
+    app,
     openButton,
-    divider(),
     addNodeButton,
     addChildButton,
     newFolderButton,
-    divider(),
     saveButton,
     undoButton,
-    divider(),
     searchButton,
     quickOpenButton,
     tasksButton,
-    divider(),
     previewButton,
     configButton,
-    el("span", "spacer"),
+    divider,
     notice,
     dirty,
-  );
-
-  const errorBanner = el("div", "error-banner");
-  errorBanner.hidden = true;
-
-  const conflictBanner = el("div", "conflict-banner");
-  conflictBanner.hidden = true;
-
-  const tabBar = el("div", "tab-bar");
-  tabBar.hidden = true;
-
-  const workspace = el("div", "workspace");
-  const sidebar = el("aside", "sidebar");
-  const treeSearch = document.createElement("input");
-  treeSearch.className = "tree-search";
-  treeSearch.placeholder = "Filter nodes...";
-  const treeContainer = el("div", "tree-container");
-  const tagPanel = el("div", "tag-panel");
-  const tagHeader = document.createElement("button");
-  tagHeader.className = "tag-header";
-  tagHeader.textContent = "Tags";
-  const tagList = el("div", "tag-list");
-  tagPanel.append(tagHeader, tagList);
-  tagPanel.hidden = true;
-  tagHeader.addEventListener("click", () => {
-    tagList.hidden = !tagList.hidden;
-  });
-  sidebar.append(treeSearch, treeContainer, tagPanel);
-
-  const docArea = el("div", "doc-area");
-  const editorPane = el("main", "editor-pane");
-  const formatBar = el("div", "format-bar");
-  const editorHost = el("div", "editor-host");
-  editorPane.append(formatBar, editorHost);
-  const secondaryPane = el("section", "secondary-pane");
-  secondaryPane.hidden = true;
-  const splitter = el("div", "splitter");
-  const previewPane = el("section", "preview-pane");
-  previewPane.textContent = "Open a note to see the preview";
-  docArea.append(editorPane, secondaryPane, splitter, previewPane);
-
-  const statusBar = el("footer", "status-bar");
-  const statusVault = el("span", "status-vault");
-  const statusFile = el("span", "status-file");
-  const statusType = el("span", "status-type");
-  const tagChips = el("span", "tag-chips");
-  const filterBadge = el("span", "filter-badge");
-  filterBadge.hidden = true;
-  const statusWords = el("span", "status-words");
-  const statusCursor = el("span", "status-cursor");
-  statusBar.append(
+    errorBanner,
+    conflictBanner,
+    tabBar,
+    treeSearch,
+    treeContainer,
+    tagPanel,
+    tagList,
+    docArea,
+    formatBar,
+    editorHost,
+    secondaryPane,
+    splitter,
+    previewPane,
     statusVault,
-    divider(),
     statusFile,
     statusType,
-    el("span", "spacer"),
     tagChips,
     filterBadge,
     statusWords,
     statusCursor,
-  );
-
-  workspace.append(sidebar, docArea);
-  app.append(topbar, tabBar, errorBanner, conflictBanner, workspace, statusBar);
-  root.replaceChildren(app);
+  } = buildLayout(root);
 
   let previewPosition: PreviewPosition = "right";
   const applyPreviewPosition = (position: PreviewPosition): void => {
@@ -1138,110 +1057,7 @@ export function mountShell(root: HTMLElement): void {
     },
   });
 
-  const cycleTab = (delta: number): void => {
-    const { tabs, activePath } = store.getState();
-    if (tabs.length === 0 || !activePath) {
-      return;
-    }
-    const index = tabs.indexOf(activePath);
-    const next = tabs[(index + delta + tabs.length) % tabs.length];
-    if (next) {
-      void store.openFile(next);
-    }
-  };
-
-  let lastClosedTab: string | null = null;
-  const closeTab = (path: string): void => {
-    lastClosedTab = path;
-    store.closeTab(path);
-  };
-
-  const renderTabBar = (): void => {
-    const { tabs, activePath } = store.getState();
-    tabBar.hidden = tabs.length === 0;
-    const elements = tabs.map((path, index) => {
-      const tab = document.createElement("div");
-      tab.className = "tab";
-      tab.draggable = true;
-      if (path === activePath) {
-        tab.classList.add("active");
-      }
-      const label = document.createElement("span");
-      label.className = "tab-label";
-      label.textContent = baseName(path);
-      label.title = path;
-      tab.append(label);
-      if (store.isTabDirty(path)) {
-        const dot = document.createElement("span");
-        dot.className = "tab-dirty";
-        dot.textContent = "●";
-        tab.append(dot);
-      }
-      const close = document.createElement("button");
-      close.className = "tab-close";
-      close.textContent = "×";
-      close.addEventListener("click", (event) => {
-        event.stopPropagation();
-        closeTab(path);
-      });
-      tab.append(close);
-      tab.addEventListener("click", () => {
-        void store.openFile(path);
-      });
-      tab.addEventListener("auxclick", (event) => {
-        if (event.button === 1) {
-          event.preventDefault();
-          closeTab(path);
-        }
-      });
-      tab.addEventListener("dragstart", (event) => {
-        event.dataTransfer?.setData("application/x-liber-tab", String(index));
-      });
-      tab.addEventListener("dragover", (event) => {
-        event.preventDefault();
-      });
-      tab.addEventListener("drop", (event) => {
-        const raw = event.dataTransfer?.getData("application/x-liber-tab");
-        if (raw === undefined || raw === "") {
-          return;
-        }
-        event.preventDefault();
-        store.moveTab(Number(raw), index);
-      });
-      return tab;
-    });
-    tabBar.replaceChildren(...elements);
-  };
-
-  commands.register({
-    id: "tab.close",
-    title: "Close tab",
-    run: () => {
-      const active = store.getState().activePath;
-      if (active) {
-        closeTab(active);
-      }
-    },
-  });
-  commands.register({
-    id: "tab.next",
-    title: "Next tab",
-    run: () => cycleTab(1),
-  });
-  commands.register({
-    id: "tab.prev",
-    title: "Previous tab",
-    run: () => cycleTab(-1),
-  });
-  commands.register({
-    id: "tab.reopen_last",
-    title: "Reopen last closed tab",
-    run: async () => {
-      if (lastClosedTab) {
-        await store.openFile(lastClosedTab);
-      }
-    },
-  });
+  const { render: renderTabBar } = mountTabs(store, tabBar);
 
   let conflictPath: string | null = null;
   const hideConflict = (): void => {
@@ -1438,102 +1254,7 @@ export function mountShell(root: HTMLElement): void {
     commands.run(id).catch((error: unknown) => store.reportError(error));
   };
 
-  const fillFormatBar = (): void => {
-    const make = (label: string, title: string, action: () => void): HTMLButtonElement => {
-      const button = document.createElement("button");
-      button.className = "format-button";
-      button.textContent = label;
-      button.title = title;
-      button.addEventListener("click", action);
-      return button;
-    };
-    formatBar.append(
-      make("B", "Bold (Ctrl+B)", () => runCommand("markdown.bold")),
-      make("I", "Italic (Ctrl+I)", () => runCommand("markdown.italic")),
-      make("S", "Strikethrough", () => runCommand("markdown.strike")),
-      make("</>", "Inline code (Ctrl+E)", () => runCommand("markdown.code")),
-      make("```", "Code block (Ctrl+Shift+E)", () => runCommand("markdown.codeBlock")),
-      make("Link", "Insert link (Ctrl+K)", () => runCommand("markdown.link")),
-      divider(),
-      make("H1", "Heading 1", () => runCommand("markdown.h1")),
-      make("H2", "Heading 2", () => runCommand("markdown.h2")),
-      make("H3", "Heading 3", () => runCommand("markdown.h3")),
-      divider(),
-      make("•", "Bullet list", () => runCommand("markdown.list")),
-      make("☐", "Task item", () => runCommand("markdown.task")),
-      make("❝", "Quote", () => runCommand("markdown.quote")),
-    );
-  };
-
-  const withEditor =
-    (action: () => void): (() => void) =>
-    () => {
-      if (store.getState().activePath) {
-        action();
-      }
-    };
-
-  commands.register({
-    id: "markdown.bold",
-    title: "Bold",
-    run: withEditor(() => wrapSelection(editorView, "**", "**")),
-  });
-  commands.register({
-    id: "markdown.italic",
-    title: "Italic",
-    run: withEditor(() => wrapSelection(editorView, "*", "*")),
-  });
-  commands.register({
-    id: "markdown.strike",
-    title: "Strikethrough",
-    run: withEditor(() => wrapSelection(editorView, "~~", "~~")),
-  });
-  commands.register({
-    id: "markdown.code",
-    title: "Inline code",
-    run: withEditor(() => wrapSelection(editorView, "`", "`")),
-  });
-  commands.register({
-    id: "markdown.codeBlock",
-    title: "Code block",
-    run: withEditor(() => insertCodeBlock(editorView)),
-  });
-  commands.register({
-    id: "markdown.link",
-    title: "Insert link",
-    run: withEditor(() => insertLink(editorView)),
-  });
-  commands.register({
-    id: "markdown.h1",
-    title: "Heading 1",
-    run: withEditor(() => toggleHeading(editorView, 1)),
-  });
-  commands.register({
-    id: "markdown.h2",
-    title: "Heading 2",
-    run: withEditor(() => toggleHeading(editorView, 2)),
-  });
-  commands.register({
-    id: "markdown.h3",
-    title: "Heading 3",
-    run: withEditor(() => toggleHeading(editorView, 3)),
-  });
-  commands.register({
-    id: "markdown.list",
-    title: "Bullet list",
-    run: withEditor(() => prefixLines(editorView, "- ")),
-  });
-  commands.register({
-    id: "markdown.task",
-    title: "Task item",
-    run: withEditor(() => prefixLines(editorView, "- [ ] ")),
-  });
-  commands.register({
-    id: "markdown.quote",
-    title: "Quote",
-    run: withEditor(() => prefixLines(editorView, "> ")),
-  });
-  fillFormatBar();
+  mountMarkdownTools({ bar: formatBar, store, view: editorView, run: runCommand, divider });
 
   const tasksPanel = new TasksPanel(app, {
     getContext: () => {
@@ -1836,12 +1557,6 @@ export function mountShell(root: HTMLElement): void {
     const activeEntry = state.activePath ? currentByPath.get(state.activePath) : undefined;
     statusWords.textContent = activeEntry ? `${activeEntry.metrics.words} words` : "";
   });
-}
-
-function el(tag: string, className: string): HTMLElement {
-  const element = document.createElement(tag);
-  element.className = className;
-  return element;
 }
 
 function dirOf(path: string): string {

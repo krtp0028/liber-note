@@ -17,7 +17,7 @@ import type { KeyBinding } from "./keymap";
 import { isPreviewPosition, nextPreviewPosition } from "./layout";
 import type { PreviewPosition } from "./layout";
 import { LuaController } from "./lua";
-import { insertLink, prefixLines, toggleHeading, wrapSelection } from "./markdown";
+import { insertCodeBlock, insertLink, prefixLines, toggleHeading, wrapSelection } from "./markdown";
 import { installMenu } from "./menu";
 import { CommandPalette, fuzzyMatch } from "./palette";
 import { baseName, parentDir } from "./paths";
@@ -1452,6 +1452,7 @@ export function mountShell(root: HTMLElement): void {
       make("I", "Italic (Ctrl+I)", () => runCommand("markdown.italic")),
       make("S", "Strikethrough", () => runCommand("markdown.strike")),
       make("</>", "Inline code (Ctrl+E)", () => runCommand("markdown.code")),
+      make("```", "Code block (Ctrl+Shift+E)", () => runCommand("markdown.codeBlock")),
       make("Link", "Insert link (Ctrl+K)", () => runCommand("markdown.link")),
       divider(),
       make("H1", "Heading 1", () => runCommand("markdown.h1")),
@@ -1491,6 +1492,11 @@ export function mountShell(root: HTMLElement): void {
     id: "markdown.code",
     title: "Inline code",
     run: withEditor(() => wrapSelection(editorView, "`", "`")),
+  });
+  commands.register({
+    id: "markdown.codeBlock",
+    title: "Code block",
+    run: withEditor(() => insertCodeBlock(editorView)),
   });
   commands.register({
     id: "markdown.link",

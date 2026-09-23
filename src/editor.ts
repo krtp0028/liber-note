@@ -33,6 +33,8 @@ import {
 import * as api from "./api";
 import { config } from "./config";
 import type { AppConfig } from "./config";
+import { codeLanguages, detectLanguage } from "./languages";
+import { fenceAt } from "./markdown";
 import type { VaultStore } from "./store";
 
 const tokenTheme = EditorView.theme(
@@ -156,6 +158,7 @@ function collectClipboardFiles(data: DataTransfer | null): File[] {
 export interface CompletionSources {
   wiki: (context: CompletionContext) => CompletionResult | null;
   tag: (context: CompletionContext) => CompletionResult | null;
+  code: (context: CompletionContext) => CompletionResult | null;
 }
 
 export function buildCoreExtensions(sources: CompletionSources): Extension[] {
@@ -172,7 +175,7 @@ export function buildCoreExtensions(sources: CompletionSources): Extension[] {
     syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
     bracketMatching(),
     closeBrackets(),
-    autocompletion({ override: [sources.wiki, sources.tag] }),
+    autocompletion({ override: [sources.wiki, sources.tag, sources.code] }),
     rectangularSelection(),
     crosshairCursor(),
     highlightActiveLine(),
@@ -209,8 +212,10 @@ export function createEditor(
   const spellcheck = new Compartment();
   let applyingExternal = false;
   let saveTimer: number | undefined;
+  let detectTimer: number | undefined;
   let currentPath: string | null = null;
   let knownTags: string[] = [];
+  let detectLanguageLater = (): void => {};
 
   const collectTags = (): string[] => {
     const tags = new Set<string>();
@@ -257,6 +262,17 @@ export function createEditor(
         .map((tag) => ({ label: tag }));
       return { from: before.from + hash + 1, options, validFor: /^[\w-]*$/ };
     },
+    code: (context) => {
+      const before = context.matchBefore(/^```([\w-]*)$/);
+      if (!before) {
+        return null;
+      }
+      const query = before.text.slice(3).toLowerCase();
+      const options = codeLanguages()
+        .filter((language) => query === "" || language.startsWith(query))
+        .map((language) => ({ label: language }));
+      return { from: before.from + 3, options, validFor: /^[\w-]*$/ };
+    },
   };
 
   const buildExtensions = () => [
@@ -294,6 +310,7 @@ export function createEditor(
     }),
     EditorView.updateListener.of((update) => {
       if (update.docChanged && !applyingExternal) {
+        detectLanguageLater();
         store.setContents(update.state.doc.toString());
         window.clearTimeout(saveTimer);
         saveTimer = window.setTimeout(() => {
@@ -328,6 +345,23 @@ export function createEditor(
     parent,
     state: EditorState.create({ doc: "", extensions: buildExtensions() }),
   });
+
+  detectLanguageLater = () => {
+    window.clearTimeout(detectTimer);
+    detectTimer = window.setTimeout(() => {
+      if (currentPath === null || !isMarkdownPath(currentPath)) {
+        return;
+      }
+      const fence = fenceAt(view.state.doc, view.state.selection.main.head);
+      if (!fence) {
+        return;
+      }
+      const language = detectLanguage(view.state.sliceDoc(fence.contentFrom, fence.contentTo));
+      if (language) {
+        view.dispatch({ changes: { from: fence.infoFrom, to: fence.infoTo, insert: language } });
+      }
+    }, 500);
+  };
 
   store.subscribe((state) => {
     if (state.entries !== lastEntriesRef) {
@@ -401,7 +435,7 @@ export interface Viewer {
 
 export function createViewer(parent: HTMLElement): Viewer {
   const language = new Compartment();
-  const emptySources: CompletionSources = { wiki: () => null, tag: () => null };
+  const emptySources: CompletionSources = { wiki: () => null, tag: () => null, code: () => null };
   const view = new EditorView({
     parent,
     state: EditorState.create({

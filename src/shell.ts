@@ -53,6 +53,7 @@ export function mountShell(root: HTMLElement): void {
     newFolderButton,
     saveButton,
     undoButton,
+    deleteButton,
     searchButton,
     quickOpenButton,
     tasksButton,
@@ -1315,6 +1316,7 @@ export function mountShell(root: HTMLElement): void {
   newFolderButton.addEventListener("click", () => runCommand("tree.new_folder"));
   saveButton.addEventListener("click", () => runCommand("file.save"));
   undoButton.addEventListener("click", () => runCommand("edit.undo"));
+  deleteButton.addEventListener("click", () => runCommand("tree.delete"));
   searchButton.addEventListener("click", () => runCommand("search.open"));
   quickOpenButton.addEventListener("click", () => runCommand("file.quick_open"));
   tasksButton.addEventListener("click", () => runCommand("tasks.open"));

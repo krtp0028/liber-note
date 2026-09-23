@@ -2,17 +2,19 @@ import { icon } from "./icons";
 import type { TreeNode } from "./resolver";
 import type { RollupAggregate, RollupConfig } from "./rollup";
 
-export function visibleNodes(roots: TreeNode[], expanded: ReadonlySet<string>): TreeNode[] {
-  const visible: TreeNode[] = [];
-  const visit = (nodes: TreeNode[]): void => {
+export type VisibleNode = TreeNode & { depth: number };
+
+export function visibleNodes(roots: TreeNode[], expanded: ReadonlySet<string>): VisibleNode[] {
+  const visible: VisibleNode[] = [];
+  const visit = (nodes: TreeNode[], depth: number): void => {
     for (const node of nodes) {
-      visible.push(node);
+      visible.push({ ...node, depth });
       if ((node.isDir || node.children.length > 0) && expanded.has(node.relPath)) {
-        visit(node.children);
+        visit(node.children, depth + 1);
       }
     }
   };
-  visit(roots);
+  visit(roots, 0);
   return visible;
 }
 
@@ -199,7 +201,7 @@ export class TreeView {
       if (node.openPath === this.primaryPath && !node.mirror) {
         item.classList.add("active");
       }
-      item.style.paddingLeft = `${8 + this.depth(node.relPath) * 14}px`;
+      item.style.paddingLeft = `${8 + node.depth * 14}px`;
 
       const twisty = document.createElement("span");
       twisty.className = "twisty";
@@ -487,9 +489,5 @@ export class TreeView {
     const clean = relPath.split("::")[0];
     const slash = clean.lastIndexOf("/");
     return slash === -1 ? "" : clean.slice(0, slash);
-  }
-
-  private depth(relPath: string): number {
-    return relPath.split("::")[0].split("/").length - 1;
   }
 }

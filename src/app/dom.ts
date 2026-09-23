@@ -14,6 +14,7 @@ export interface Layout {
   newFolderButton: HTMLButtonElement;
   saveButton: HTMLButtonElement;
   undoButton: HTMLButtonElement;
+  deleteButton: HTMLButtonElement;
   searchButton: HTMLButtonElement;
   quickOpenButton: HTMLButtonElement;
   tasksButton: HTMLButtonElement;
@@ -66,6 +67,7 @@ export function buildLayout(root: HTMLElement): Layout {
   const newFolderButton = iconButton("new-folder", "New folder (Ctrl+Alt+N)");
   const saveButton = iconButton("save", "Save (Ctrl+S)");
   const undoButton = iconButton("undo", "Undo last file operation");
+  const deleteButton = iconButton("trash", "Delete node (Delete)");
   const searchButton = iconButton("search", "Search vault (Ctrl+Shift+F)");
   const quickOpenButton = iconButton("go-to", "Quick open (Ctrl+P)");
   const tasksButton = iconButton("check", "Open tasks");
@@ -91,6 +93,7 @@ export function buildLayout(root: HTMLElement): Layout {
     divider(),
     saveButton,
     undoButton,
+    deleteButton,
     divider(),
     searchButton,
     quickOpenButton,
@@ -175,6 +178,7 @@ export function buildLayout(root: HTMLElement): Layout {
     newFolderButton,
     saveButton,
     undoButton,
+    deleteButton,
     searchButton,
     quickOpenButton,
     tasksButton,

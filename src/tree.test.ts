@@ -32,6 +32,16 @@ describe("visibleNodes", () => {
     ]);
   });
 
+  it("reports tree depth, not folder depth", () => {
+    const flat = [node("Alpha.md", false, [node("child.md", false)])];
+    expect(
+      visibleNodes(flat, new Set(["Alpha.md"])).map((item) => [item.relPath, item.depth]),
+    ).toEqual([
+      ["Alpha.md", 0],
+      ["child.md", 1],
+    ]);
+  });
+
   it("expands notes that have child nodes", () => {
     const fileParent = node("Alpha.md", false, [node("child.md", false)]);
     expect(visibleNodes([fileParent], new Set()).map((item) => item.relPath)).toEqual(["Alpha.md"]);

@@ -14,6 +14,11 @@
   --error-bg: #f8d7da;
   --error-fg: #7a1f24;
   --warning: #b56b00;
+  --code-keyword: #8250df;
+  --code-string: #0a7d38;
+  --code-number: #b35309;
+  --code-func: #0550ae;
+  --code-type: #0e7490;
   --font-ui: Inter, Avenir, "Segoe UI", system-ui, sans-serif;
   --font-mono: "Cascadia Code", Consolas, "JetBrains Mono", monospace;
   --row-h: 22px;
@@ -34,6 +39,11 @@
     --selection: rgba(79, 146, 232, 0.35);
     --error-bg: #4a1d20;
     --error-fg: #f1aeb5;
+    --code-keyword: #d2a8ff;
+    --code-string: #7ee787;
+    --code-number: #ffa657;
+    --code-func: #79c0ff;
+    --code-type: #56d4dd;
   }
 }
 
@@ -655,6 +665,61 @@ body {
 .preview-pane pre code {
   background: transparent;
   padding: 0;
+}
+
+.preview-pane .hljs-comment,
+.preview-pane .hljs-quote {
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.preview-pane .hljs-keyword,
+.preview-pane .hljs-selector-tag,
+.preview-pane .hljs-literal,
+.preview-pane .hljs-doctag,
+.preview-pane .hljs-meta .hljs-keyword {
+  color: var(--code-keyword);
+}
+
+.preview-pane .hljs-string,
+.preview-pane .hljs-regexp,
+.preview-pane .hljs-addition,
+.preview-pane .hljs-attribute,
+.preview-pane .hljs-meta .hljs-string {
+  color: var(--code-string);
+}
+
+.preview-pane .hljs-number,
+.preview-pane .hljs-symbol,
+.preview-pane .hljs-bullet,
+.preview-pane .hljs-link {
+  color: var(--code-number);
+}
+
+.preview-pane .hljs-title,
+.preview-pane .hljs-title.class_,
+.preview-pane .hljs-title.function_,
+.preview-pane .hljs-section {
+  color: var(--code-func);
+}
+
+.preview-pane .hljs-type,
+.preview-pane .hljs-built_in,
+.preview-pane .hljs-params,
+.preview-pane .hljs-class .hljs-title {
+  color: var(--code-type);
+}
+
+.preview-pane .hljs-deletion {
+  color: var(--error-fg);
+}
+
+.preview-pane .hljs-emphasis {
+  font-style: italic;
+}
+
+.preview-pane .hljs-strong {
+  font-weight: 600;
 }
 
 .preview-pane blockquote {

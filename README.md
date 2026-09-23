@@ -1,4 +1,4 @@
-# Graft
+# Liber
 
 Lightweight hierarchical Markdown notes. A native desktop app (Tauri 2 + Rust + TypeScript) for people who like tree-based notes like CherryTree, but want plain `.md` files, a Markdown preview that can sit on any side, and deep configuration.
 
@@ -22,13 +22,17 @@ Lightweight hierarchical Markdown notes. A native desktop app (Tauri 2 + Rust + 
 
 ## Install
 
-- **Windows**: run `Graft_<version>_x64-setup.exe` (NSIS). WebView2 is downloaded by the installer if missing.
-- **Portable**: place `graft-portable.txt` next to `graft.exe`; all config lives in `graft-data/` beside the exe.
-- **Linux/macOS**: build from source with `npx tauri build` (AppImage/deb/rpm, app/dmg).
+Download the latest build for your platform from the GitHub Releases page:
+
+- **Windows**: run `Liber_<version>_x64-setup.exe` (NSIS). WebView2 is downloaded by the installer if missing. SmartScreen may warn about the unsigned installer — choose **More info → Run anyway**.
+- **Linux**: `liber_<version>_amd64.AppImage` (portable, bundles WebKitGTK) or `liber_<version>_amd64.deb` for Debian/Ubuntu (requires WebKitGTK 4.1).
+- **macOS**: `Liber_<version>_universal.dmg` (Apple Silicon and Intel). The app is unsigned, so the first launch needs right-click → **Open**.
+- **Portable (Windows)**: place `liber-portable.txt` next to `liber.exe`; all config lives in `liber-data/` beside the exe.
+- **From source**: `npx tauri build` on any platform.
 
 ## Getting started
 
-1. Start Graft and click **Open Folder** to pick a vault (any folder of Markdown files).
+1. Start Liber and click **Open Folder** to pick a vault (any folder of Markdown files).
 2. Browse the tree: arrows navigate, `Enter` opens, folders expand with the twisty.
 3. Edit in the left pane; the preview updates live; autosave is on.
 4. `Ctrl+Shift+P` opens the command palette; `Ctrl+P` quick-opens a note; `Ctrl+Shift+F` searches the vault.
@@ -60,10 +64,10 @@ hours: 12 # numeric fields can be summed by rollups
 
 Layered, later wins: built-in defaults → user config → vault config.
 
-- User config: `%APPDATA%\graft\config.toml` (Linux: `~/.config/graft/`, macOS: `~/Library/Application Support/graft/`)
-- Vault config: `<vault>/.graft/config.toml`
-- Themes: `%APPDATA%\graft\themes\*.toml`
-- Escape hatch: `%APPDATA%\graft\custom.css` (loaded last)
+- User config: `%APPDATA%\liber\config.toml` (Linux: `~/.config/liber/`, macOS: `~/Library/Application Support/liber/`)
+- Vault config: `<vault>/.liber/config.toml`
+- Themes: `%APPDATA%\liber\themes\*.toml`
+- Escape hatch: `%APPDATA%\liber\custom.css` (loaded last)
 - Open your config from the palette: **Open config file**. Inspect effective values and errors: **Show config health** (or the **Config** button).
 
 Config is hot-reloaded on save; invalid files keep the last good config.
@@ -159,7 +163,7 @@ Hooks: `startup`, `open`, `save`, `new_note`, `tree_change`. Command return valu
 
 Updates are opt-in and require signing keys:
 
-1. `npx tauri signer generate -w ~/.tauri/graft.key` and keep the private key out of the repo.
+1. `npx tauri signer generate -w ~/.tauri/liber.key` and keep the private key out of the repo.
 2. Put the public key in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey` and set `bundle.createUpdaterArtifacts` to `true`.
 3. Add `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` as repository secrets; the release workflow signs the bundles.
 4. Host `latest.json` (with the signed artifacts) somewhere reachable and list it in `plugins.updater.endpoints`.

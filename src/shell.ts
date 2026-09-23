@@ -34,6 +34,7 @@ import { SearchUi } from "./searchui";
 import { computeRollups } from "./rollup";
 import { VaultStore } from "./store";
 import { TasksPanel } from "./tasks";
+import { mountWelcome } from "./welcome";
 import { upsertFrontmatter } from "./frontmatter";
 import { ThemeController } from "./theme";
 import { TreeView } from "./tree";
@@ -1294,6 +1295,8 @@ export function mountShell(root: HTMLElement): void {
     title: "Open recent vault",
     run: () => recentPanel.open(),
   });
+
+  mountWelcome(app, store);
 
   void installMenu(runCommand, showNotice);
 

@@ -722,6 +722,91 @@ body {
   font-weight: 600;
 }
 
+.doctor-panel {
+  max-width: 720px;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.doctor-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+
+.doctor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.doctor-clean {
+  padding: 12px;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.doctor-issues,
+.doctor-changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doctor-issue {
+  padding: 3px 6px;
+  border-left: 3px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.doctor-issue:hover {
+  background: var(--bg-hover);
+}
+
+.doctor-issue.warning {
+  border-left-color: var(--warning);
+}
+
+.doctor-issue.error {
+  border-left-color: var(--error-fg);
+}
+
+.doctor-changes li {
+  font-size: 11px;
+}
+
+.doctor-diff {
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.doctor-before {
+  color: var(--error-fg);
+}
+
+.doctor-after {
+  color: var(--code-string);
+}
+
+.doctor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
 .preview-pane blockquote {
   margin: 0.7em 0;
   padding-left: 10px;

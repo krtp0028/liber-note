@@ -1,4 +1,5 @@
 pub mod config;
+pub mod doctor;
 pub mod fs;
 pub mod lua;
 pub mod vault;
@@ -151,6 +152,25 @@ fn watch_vault(
 }
 
 #[tauri::command]
+fn doctor_audit(root: String) -> Result<Vec<doctor::Issue>, String> {
+    doctor::audit(&root)
+}
+
+#[tauri::command]
+fn doctor_plan(
+    root: String,
+    fix: String,
+    payload: serde_json::Value,
+) -> Result<doctor::Plan, String> {
+    doctor::plan(&root, &fix, &payload)
+}
+
+#[tauri::command]
+fn doctor_apply(root: String, fix: String, payload: serde_json::Value) -> Result<usize, String> {
+    doctor::apply(&root, &fix, &payload)
+}
+
+#[tauri::command]
 fn config_paths(root: Option<String>) -> Result<config::ConfigPaths, String> {
     config::config_paths(root.as_deref())
 }
@@ -284,6 +304,9 @@ pub fn run() {
             trash_empty,
             write_text_absolute,
             watch_vault,
+            doctor_audit,
+            doctor_plan,
+            doctor_apply,
             config_paths,
             config_read,
             config_write,

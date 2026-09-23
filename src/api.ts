@@ -178,3 +178,38 @@ export function themesList(dir: string): Promise<string[]> {
 export function openExternal(path: string): Promise<void> {
   return invoke("open_external", { path });
 }
+
+export interface DoctorIssue {
+  kind: string;
+  severity: string;
+  relPath: string;
+  line: number;
+  message: string;
+  fix: string | null;
+}
+
+export interface DoctorChange {
+  relPath: string;
+  action: string;
+  summary: string;
+  before: string;
+  after: string;
+}
+
+export interface DoctorPlan {
+  fix: string;
+  count: number;
+  changes: DoctorChange[];
+}
+
+export function doctorAudit(root: string): Promise<DoctorIssue[]> {
+  return invoke("doctor_audit", { root });
+}
+
+export function doctorPlan(root: string, fix: string, payload: unknown): Promise<DoctorPlan> {
+  return invoke("doctor_plan", { root, fix, payload });
+}
+
+export function doctorApply(root: string, fix: string, payload: unknown): Promise<number> {
+  return invoke("doctor_apply", { root, fix, payload });
+}

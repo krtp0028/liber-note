@@ -14,6 +14,7 @@ import { config } from "./config";
 import { createEditor, createViewer } from "./editor";
 import { exportNoteAsHtml, exportNoteAsPdf } from "./export";
 import { openHealthPanel } from "./health";
+import { openDoctorPanel } from "./doctor";
 import { DEFAULT_KEYMAP, isMacPlatform, matchesEvent } from "./keymap";
 import type { KeyBinding } from "./keymap";
 import { isPreviewPosition, nextPreviewPosition } from "./layout";
@@ -1192,6 +1193,20 @@ export function mountShell(root: HTMLElement): void {
     title: "Show config health",
     run: () => {
       openHealthPanel(app, config, () => themeController.getErrors());
+    },
+  });
+  commands.register({
+    id: "doctor.open",
+    title: "Run vault doctor",
+    run: () => {
+      openDoctorPanel(
+        app,
+        () => store.getState().root,
+        (relPath, line) => {
+          void store.openFileAt(relPath, line);
+        },
+        showNotice,
+      );
     },
   });
   commands.register({

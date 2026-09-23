@@ -155,20 +155,23 @@ Hooks: `startup`, `open`, `save`, `new_note`, `tree_change`. Command return valu
 | Drag onto a folder                          | Set `parent`                                          |
 | `Ctrl+Z` (tree focus)                       | Undo last file operation                              |
 | `Ctrl+B` / `Ctrl+I` / `Ctrl+E` / `Ctrl+K`   | Bold / italic / inline code / link (editor)           |
+| `Ctrl+Shift+E`                              | Code block (detects the language and writes it in)    |
 | `Ctrl+Shift+D`                              | Open today's journal                                  |
 | `Ctrl+=` / `Ctrl+-` / `Ctrl+0`              | Zoom in / out / reset                                 |
 | `Ctrl+W` / `Ctrl+Tab`                       | Close / cycle tabs                                    |
 
 ## Auto-updates
 
-Updates are opt-in and require signing keys:
+Updates are served from the latest GitHub Release (`latest.json` is generated and attached by the release workflow, and the endpoint is already set in `src-tauri/tauri.conf.json`). One-time setup:
 
-1. `npx tauri signer generate -w ~/.tauri/liber.key` and keep the private key out of the repo.
-2. Put the public key in `src-tauri/tauri.conf.json` under `plugins.updater.pubkey` and set `bundle.createUpdaterArtifacts` to `true`.
-3. Add `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` as repository secrets; the release workflow signs the bundles.
-4. Host `latest.json` (with the signed artifacts) somewhere reachable and list it in `plugins.updater.endpoints`.
+1. `npx tauri signer generate -w ~/.tauri/liber.key` — keep the private key out of the repo.
+2. Paste the printed public key into `src-tauri/tauri.conf.json` under `plugins.updater.pubkey`.
+3. Add `TAURI_SIGNING_PRIVATE_KEY` (the contents of the key file) and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` as repository secrets.
+4. Add the repository variable `UPDATER_SIGNING` = `true`.
 
-Until configured, **Help → Check for Updates** reports that updates are not configured.
+Each tagged release then also produces signed updater artifacts, and the workflow merges the per-OS manifests into one `latest.json`. Without step 4 the release still builds, just without updater artifacts.
+
+Until the public key is set, **Help → Check for Updates** reports that updates are not configured.
 
 ## Development
 

@@ -63,6 +63,7 @@ jobs:
       - run: npm ci
 
       - name: Build bundles
+        shell: bash
         run: |
           if [ "$UPDATER_SIGNING" = "true" ]; then
             npx tauri build ${{ matrix.args }} --config '{"bundle":{"createUpdaterArtifacts":true}}'

@@ -87,10 +87,179 @@ export const DEFAULT_DARK: ThemeDefinition = {
   },
 };
 
+const ROBBYRUSSELL: ThemeDefinition = {
+  meta: { name: "robbyrussell", variant: "light" },
+  palette: {
+    canvas: "#f7f3e8",
+    paper: "#fffdf7",
+    sidebar: "#eee7d6",
+    ink: "#27313a",
+    muted: "#756f65",
+    line: "#d8cebd",
+    green: "#2f7d32",
+    teal: "#007c83",
+    navy: "#244b74",
+    brown: "#8a5a2b",
+    olive: "#718355",
+    red: "#a33b32",
+  },
+  tokens: {
+    bg: "palette.canvas",
+    surface: "palette.paper",
+    sidebar: "palette.sidebar",
+    hover: "rgba(39, 49, 58, 0.08)",
+    fg: "palette.ink",
+    muted: "palette.muted",
+    border: "palette.line",
+    accent: "palette.teal",
+    accentFg: "palette.paper",
+    selection: "#d8eee3",
+    errorBg: "#f4d6d2",
+    errorFg: "palette.red",
+  },
+};
+
+const AGNOSTER: ThemeDefinition = {
+  meta: { name: "agnoster", variant: "dark" },
+  palette: {
+    navy: "#002b36",
+    teal: "#073642",
+    sidebar: "#001f27",
+    blue: "#268bd2",
+    cyan: "#2aa198",
+    yellow: "#b58900",
+    orange: "#cb4b16",
+    green: "#859900",
+    red: "#dc322f",
+    violet: "#6c71c4",
+    cream: "#eee8d5",
+    muted: "#93a1a1",
+  },
+  tokens: {
+    bg: "palette.navy",
+    surface: "palette.teal",
+    sidebar: "palette.sidebar",
+    hover: "rgba(147, 161, 161, 0.14)",
+    fg: "palette.cream",
+    muted: "palette.muted",
+    border: "rgba(147, 161, 161, 0.28)",
+    accent: "palette.blue",
+    accentFg: "palette.navy",
+    selection: "rgba(38, 139, 210, 0.3)",
+    errorBg: "palette.red",
+    errorFg: "palette.cream",
+  },
+};
+
+const POWERLINE: ThemeDefinition = {
+  meta: { name: "powerline", variant: "dark" },
+  palette: {
+    background: "#0d1117",
+    surface: "#161b22",
+    sidebar: "#090c10",
+    text: "#d8dee9",
+    muted: "#8b949e",
+    line: "#30363d",
+    cyan: "#2dd4bf",
+    green: "#7ee787",
+    orange: "#ffa657",
+    blue: "#58a6ff",
+    yellow: "#d29922",
+    red: "#f85149",
+  },
+  tokens: {
+    bg: "palette.background",
+    surface: "palette.surface",
+    sidebar: "palette.sidebar",
+    hover: "rgba(255, 255, 255, 0.08)",
+    fg: "palette.text",
+    muted: "palette.muted",
+    border: "palette.line",
+    accent: "palette.cyan",
+    accentFg: "#061016",
+    selection: "rgba(45, 212, 191, 0.28)",
+    errorBg: "palette.red",
+    errorFg: "#ffffff",
+  },
+};
+
+const NEKONIGHT: ThemeDefinition = {
+  meta: { name: "nekonight", variant: "dark" },
+  palette: {
+    background: "#161923",
+    surface: "#202331",
+    sidebar: "#11141c",
+    text: "#e6e1f5",
+    muted: "#9b98aa",
+    line: "#36384a",
+    violet: "#c792ea",
+    magenta: "#ff9eb5",
+    cyan: "#89ddff",
+    yellow: "#ffcb6b",
+    green: "#c3e88d",
+    red: "#f07178",
+  },
+  tokens: {
+    bg: "palette.background",
+    surface: "palette.surface",
+    sidebar: "palette.sidebar",
+    hover: "rgba(199, 146, 234, 0.12)",
+    fg: "palette.text",
+    muted: "palette.muted",
+    border: "palette.line",
+    accent: "palette.violet",
+    accentFg: "#181221",
+    selection: "rgba(199, 146, 234, 0.3)",
+    errorBg: "#55283a",
+    errorFg: "palette.magenta",
+  },
+};
+
+const RAINBOWBRITE: ThemeDefinition = {
+  meta: { name: "rainbowbrite", variant: "dark" },
+  palette: {
+    background: "#18181b",
+    surface: "#24242a",
+    sidebar: "#101013",
+    text: "#f4f1e8",
+    muted: "#aaa7a3",
+    line: "#3b3a42",
+    red: "#ff6b6b",
+    blue: "#5fa8ff",
+    yellow: "#ffd75f",
+    green: "#7ee787",
+    purple: "#c77dff",
+    orange: "#ff9f43",
+  },
+  tokens: {
+    bg: "palette.background",
+    surface: "palette.surface",
+    sidebar: "palette.sidebar",
+    hover: "rgba(255, 255, 255, 0.08)",
+    fg: "palette.text",
+    muted: "palette.muted",
+    border: "palette.line",
+    accent: "palette.yellow",
+    accentFg: "#201a0d",
+    selection: "rgba(95, 168, 255, 0.3)",
+    errorBg: "#4b1d29",
+    errorFg: "palette.red",
+  },
+};
+
 export function builtinThemes(): Map<string, ThemeDefinition> {
   const themes = new Map<string, ThemeDefinition>();
-  themes.set(DEFAULT_LIGHT.meta.name, DEFAULT_LIGHT);
-  themes.set(DEFAULT_DARK.meta.name, DEFAULT_DARK);
+  for (const theme of [
+    DEFAULT_LIGHT,
+    DEFAULT_DARK,
+    ROBBYRUSSELL,
+    AGNOSTER,
+    POWERLINE,
+    NEKONIGHT,
+    RAINBOWBRITE,
+  ]) {
+    themes.set(theme.meta.name, theme);
+  }
   return themes;
 }
 

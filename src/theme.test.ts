@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_LIGHT, parseTheme, pickThemeName, resolveTheme } from "./theme";
+import { builtinThemes, DEFAULT_LIGHT, parseTheme, pickThemeName, resolveTheme } from "./theme";
 import { DEFAULT_CONFIG } from "./config";
 
 describe("resolveTheme", () => {
@@ -60,7 +60,6 @@ bg = "palette.north"
     const resolved = resolveTheme("missing", new Map());
     expect(resolved.tokens.bg).toBe(DEFAULT_LIGHT.tokens.bg);
   });
-
   it("stops at cycles", () => {
     const registry = new Map([
       ["a", parseTheme("a", '[meta]\nname = "a"\nextends = "b"\n[colors]\naccent = "#111111"\n')],
@@ -68,8 +67,21 @@ bg = "palette.north"
     ]);
 
     const resolved = resolveTheme("a", registry);
+
     expect(resolved.tokens.accent).toBe("#111111");
     expect(resolved.tokens.bg).toBe("#222222");
+  });
+
+  it("includes the bundled Oh My Bash-inspired palettes", () => {
+    const registry = builtinThemes();
+
+    for (const name of ["robbyrussell", "agnoster", "powerline", "nekonight", "rainbowbrite"]) {
+      expect(registry.has(name)).toBe(true);
+      const resolved = resolveTheme(name, registry);
+      expect(Object.values(resolved.tokens).every((token) => !token.includes("palette."))).toBe(
+        true,
+      );
+    }
   });
 });
 

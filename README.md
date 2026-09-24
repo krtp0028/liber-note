@@ -9,7 +9,7 @@ Lightweight hierarchical Markdown notes. A native desktop app (Tauri 2 + Rust + 
 - **Rollups** — every node shows subtree task progress (`3/7 ✓`), word counts, and numeric field sums; click a badge to filter
 - **Inherited context** — tags flow down from branch notes (`Docs.md` governs `Docs/**`); chips show where they came from
 - **Preview anywhere** — hidden / right / left / bottom / top, cycled with `Ctrl+Shift+V`, draggable splitter, scroll sync
-- **Deep configuration** — layered TOML config, theme files, `custom.css`, hot reload, config health panel
+- **Deep configuration** — layered TOML config, bundled palettes, user theme files, `custom.css`, hot reload, config health panel
 - **Lua scripting** — `init.lua` with commands, hooks, and keymaps
 - **Attachments** — paste or drop images into a note; they land in `assets/` and render in the preview
 - **Tag browser & tasks** — tag counts in the sidebar, and an open-tasks panel with click-to-jump
@@ -67,6 +67,8 @@ Layered, later wins: built-in defaults → user config → vault config.
 - User config: `%APPDATA%\liber\config.toml` (Linux: `~/.config/liber/`, macOS: `~/Library/Application Support/liber/`)
 - Vault config: `<vault>/.liber/config.toml`
 - Themes: `%APPDATA%\liber\themes\*.toml`
+- Bundled themes: `default-light`, `default-dark`, `robbyrussell`, `agnoster`, `powerline`, `nekonight`, `rainbowbrite`
+- The bundled presets are color interpretations inspired by Oh My Bash prompt themes; a user theme with the same name overrides its bundled version.
 - Escape hatch: `%APPDATA%\liber\custom.css` (loaded last)
 - Open your config from the palette: **Open config file**. Inspect effective values and errors: **Show config health** (or the **Config** button).
 
@@ -102,6 +104,8 @@ folder = "Journal"
 [keymap]
 "Ctrl+Alt+N" = "tree.add_node"
 ```
+
+Set `followSystem = false` and `name = "agnoster"` to select one bundled theme directly. With `followSystem = true`, set `light` and `dark` to the names of the themes used for each system appearance.
 
 Theme files support inheritance and palettes:
 

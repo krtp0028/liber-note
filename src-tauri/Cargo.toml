@@ -1,6 +1,6 @@
 [package]
 name = "liber"
-version = "0.1.0"
+version = "0.1.1"
 description = "Lightweight hierarchical Markdown notes"
 authors = ["krtp0028"]
 edition = "2021"
